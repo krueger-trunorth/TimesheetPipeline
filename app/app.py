@@ -15,6 +15,8 @@ import dash
 from dash import html
 import dash_mantine_components as dmc
 
+from app.config import is_dev_mode
+
 # app definitions
 app = dash.Dash(__name__)
 server = app.server
@@ -22,9 +24,22 @@ server = app.server
 # page definitions
 
 # dashboard layout
+def _dev_banner() -> dmc.Alert | None:
+    if not is_dev_mode():
+        return None
+
+    return dmc.Alert(
+        "Dev mode: hot reload enabled, database disabled.",
+        title="UI development",
+        color="yellow",
+        variant="light",
+    )
+
+
 app.layout = dmc.MantineProvider(
     html.Div(
         [
+            _dev_banner(),
             dmc.Title("TruNorth Timesheet Pipeline", order=1),
             dmc.Text("App is running. Pages not implemented yet."),
         ]

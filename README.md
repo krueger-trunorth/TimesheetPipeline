@@ -14,7 +14,10 @@ The current database model is shown below. The green tables are the tables curre
 ![Database diagram](database.png)
 
 ## Running the Application
-Requires Docker + Docker Compose.
+
+### Full stack (Docker)
+
+Requires Docker + Docker Compose. Starts the Dash app and attached SQLite database container.
 
 ```bash
 docker compose up --build
@@ -27,3 +30,31 @@ To stop:
 ```bash
 docker compose down
 ```
+
+### Dev mode (UI hot reload, no Docker)
+
+For fast UI work. Runs the dashboard locally with hot reload and skips Docker and the database.
+
+Install dependencies once (use a virtual environment):
+
+```bash
+pip install -r requirements.txt
+```
+
+Start dev mode:
+
+```bash
+python dev.py
+```
+
+Open the dashboard at [http://localhost:8050](http://localhost:8050). UI file edits auto-refresh in the browser.
+
+Dev mode sets `DISABLE_DB=1` so database logic is skipped. Use Docker for full pipeline runs.
+
+Optional environment variables:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `DASH_HOST` | `127.0.0.1` | Bind address |
+| `DASH_PORT` | `8050` | Port |
+| `DISABLE_DB` | `1` (set by `dev.py`) | Skip database access |
