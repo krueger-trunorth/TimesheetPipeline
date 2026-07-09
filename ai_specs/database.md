@@ -20,7 +20,6 @@ Format: `Member (datatype) (relation)`. PK = primary key, FK = foreign key.
 - TimecardID (int) (PK)
 - EmployeeID (int) (FK)
 - WeekOf (date)
-- DateSubmitted (date)
 - Status (str)
 
 Relations:
