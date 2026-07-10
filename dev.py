@@ -25,7 +25,7 @@ def run_dev() -> None:
     port = int(os.getenv("DASH_PORT", "8050"))
 
     # import app after env is set so it reads dev flags
-    from app.app import app
+    from app.main import app
 
     # run with hot reload enabled
     app.run(host=host, port=port, debug=True, use_reloader=True)

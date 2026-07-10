@@ -1,41 +1,41 @@
 '''
 ----------------------------------------------------------------------------------------------------------------------
-                                                App   
+                                                App
 ----------------------------------------------------------------------------------------------------------------------
 This file contains the main app for the TruNorth Timesheet datatables ingest and dashboard.
 Using Plotly Dash, we create a simple to understand dashboard that allows users to graphically view timesheet data.
-
-NOTE: V1 scaffold only. No page, database, or backend logic implemented yet. This just confirms the app runs locally.
 ----------------------------------------------------------------------------------------------------------------------
 '''
 # import libraries
 import os
 
 import dash
-from dash import html
+from dash import Input, Output, dcc, html
 import dash_mantine_components as dmc
 
+from app.pages.dashboard_page import DashboardPage
+from app.pages.ingest_page import IngestPage
 from app.ui.trunorth.footer import Footer, FooterLink
 from app.ui.trunorth.navbar import Navbar, NavPage
 
 # app definitions
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# dash-mantine-components requires React 18+ (useId); Dash 2.x defaults to React 16.
+dash._dash_renderer._set_react_version("18.2.0")
+
 app = dash.Dash(
     __name__,
     assets_folder=os.path.join(_APP_DIR, "img"),
+    suppress_callback_exceptions=True,
 )
 server = app.server
 
 # page definitions
-NAVBAR = Navbar(
-    logo_src="/assets/trunorth-logo.png",
-    pages=[
-        NavPage(label="Dashboard", href="/"),
-        NavPage(label="Ingest", href="/ingest"),
-    ],
-    active_path="/",
-)
+NAV_PAGES = [
+    NavPage(label="Dashboard", href="/"),
+    NavPage(label="Ingest", href="/ingest"),
+]
 
 FOOTER = Footer(
     links=[
@@ -48,16 +48,20 @@ FOOTER = Footer(
     copyright_text="Copyright © TruNorth. All Rights Reserved.",
 )
 
+DASHBOARD_PAGE = DashboardPage()
+DASHBOARD_PAGE.register_callbacks(app)
+
+INGEST_PAGE = IngestPage()
+INGEST_PAGE.register_callbacks(app)
+
 # dashboard layout
 app.layout = dmc.MantineProvider(
     html.Div(
         [
-            NAVBAR.layout(),
+            dcc.Location(id="url", refresh=False),
+            html.Div(id="navbar-container"),
             dmc.Container(
-                [
-                    dmc.Title("TruNorth Timesheet Pipeline", order=1),
-                    dmc.Text("App is running. Pages not implemented yet."),
-                ],
+                html.Div(id="page-content"),
                 fluid=True,
                 py="md",
                 style={"flex": 1},
@@ -71,6 +75,28 @@ app.layout = dmc.MantineProvider(
         },
     )
 )
+
+
+# page routing
+@app.callback(
+    Output("navbar-container", "children"),
+    Output("page-content", "children"),
+    Input("url", "pathname"),
+)
+def display_page(pathname: str | None):
+    active_path = pathname or "/"
+
+    navbar = Navbar(
+        logo_src="/assets/trunorth-logo.png",
+        pages=NAV_PAGES,
+        active_path=active_path,
+    ).layout()
+
+    if active_path == "/ingest":
+        return navbar, INGEST_PAGE.layout()
+
+    return navbar, DASHBOARD_PAGE.layout()
+
 
 # local entrypoint
 if __name__ == "__main__":

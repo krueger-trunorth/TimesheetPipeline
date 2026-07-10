@@ -34,7 +34,8 @@ TimelogKey = tuple[int, str, date]
 # session helpers
 def create_session() -> Session:
     engine = init_db()
-    return SessionLocal(bind=engine)()
+    SessionLocal.configure(bind=engine)
+    return SessionLocal()
 
 
 # coercion helpers

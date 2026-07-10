@@ -13,4 +13,6 @@ COPY app/ ./app/
 
 EXPOSE 8050
 
-CMD ["python", "app/app.py"]
+ENV PYTHONPATH=/app
+ENV REACT_VERSION=18.2.0
+CMD ["python", "-m", "app.main"]

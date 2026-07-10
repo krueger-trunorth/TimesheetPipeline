@@ -194,7 +194,7 @@ def _parse_date(value: object) -> date | None:
 
 
 def _parse_hours(value: object) -> float | None:
-    if value is None or (isinstance(value, float) and pd.isna(value)):
+    if value is None or pd.isna(value):
         return None
 
     if isinstance(value, str):

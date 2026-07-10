@@ -124,7 +124,6 @@ class Footer:
                     self._github_icon(),
                     href=self.github_href,
                     underline="never",
-                    anchorProps={"title": "GitHub"},
                 ),
             ],
             gap="sm",
